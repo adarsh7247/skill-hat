@@ -23,6 +23,9 @@ import {
 } from "@/src/components/ui/alert-dialog";
 import { Button } from "@/src/components/ui/button";
 
+
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function InternshipsPage() {
   const [internships, setInternships] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +34,7 @@ export default function InternshipsPage() {
   // ✅ FETCH DATA
   const fetchInternships = async () => {
     try {
-      const res = await fetch("https://skillhat-backend.onrender.com/upload/internships/list/");
+      const res = await fetch(`${API}/upload/internships/list/`);
       const data = await res.json();
       setInternships(data);
     } catch (err) {
@@ -51,7 +54,7 @@ export default function InternshipsPage() {
 
     try {
       await fetch(
-        `https://skillhat-backend.onrender.com/upload/delete_internship/${deleteId}/`,
+        `${API}/upload/delete_internship/${deleteId}/`,
         {
           method: "DELETE",
         },

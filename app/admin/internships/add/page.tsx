@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function AddInternship({
   initialData,
   isEditMode,
@@ -84,7 +86,7 @@ export default function AddInternship({
         formDataImg.append("image", image);
 
         const res = await fetch(
-          "https://skillhat-backend.onrender.com/upload/internship/images/",
+          `${API}/upload/internship/images/`,
           {
             method: "POST",
             body: formDataImg,
@@ -107,7 +109,7 @@ export default function AddInternship({
 
       // ✅ STEP 3: CREATE
       if (!isEdit) {
-        const res = await fetch("https://skillhat-backend.onrender.com/upload/internship/", {
+        const res = await fetch(`${API}/upload/internship/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -123,7 +125,7 @@ export default function AddInternship({
       // ✅ STEP 4: UPDATE
       else {
         const res = await fetch(
-          `https://skillhat-backend.onrender.com/upload/update_internship/${internshipId}/`,
+          `${API}/upload/update_internship/${internshipId}/`,
           {
             method: "PUT",
             headers: {

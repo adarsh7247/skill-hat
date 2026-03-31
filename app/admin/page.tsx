@@ -1,5 +1,4 @@
 "use client";
-import { useData } from "@/src/context/DataContext";
 import {
   MdWork,
   MdSchool,
@@ -12,21 +11,18 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
+const API = process.env.NEXT_PUBLIC_APP_URL
+
 export default function Dashboard() {
-  const { enrollments, getTotalRevenue } = useData();
+
   const [internships, setInternships] = useState<any[]>([]);
   const [mentors, setMentors] = useState<any[]>([]);
 
-  const activeMentors = mentors.filter((m) => m.status === "Active").length;
-  const totalEnrollments = enrollments.filter(
-    (e) => e.status === "Active",
-  ).length;
-  const totalRevenue = getTotalRevenue();
 
   const fetchInternships = async () => {
     try {
       const res = await fetch(
-        "https://skillhat-backend.onrender.com/upload/internships/list/",
+        `${API}/upload/internships/list/`,
       );
 
       if (!res.ok) {
@@ -53,7 +49,7 @@ export default function Dashboard() {
   const fetchMentors = async () => {
     try {
       const res = await fetch(
-        "https://skillhat-backend.onrender.com/api/mentors/list/",
+        `${API}/api/mentors/list/`,
       );
 
       if (!res.ok) {
@@ -261,49 +257,6 @@ export default function Dashboard() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {enrollments.slice(0, 5).map((enrollment, index) => {
-                return (
-                  <motion.tr
-                    key={enrollment.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.05 * index }}
-                    className="hover:bg-gray-50"
-                  >
-                    <td className="px-4 py-3">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {enrollment.studentName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {enrollment.studentEmail}
-                        </p>
-                      </div>
-                    </td>
-
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {new Date(enrollment.enrolledDate).toLocaleDateString(
-                        "en-GB",
-                      )}{" "}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs rounded-full font-medium ${
-                          enrollment.status === "Active"
-                            ? "bg-green-100 text-green-800"
-                            : enrollment.status === "Completed"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {enrollment.status}
-                      </span>
-                    </td>
-                  </motion.tr>
-                );
-              })}
-            </tbody>
           </table>
         </div>
       </motion.div>

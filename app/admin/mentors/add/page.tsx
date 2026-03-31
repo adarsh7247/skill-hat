@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MdUpload } from "react-icons/md";
 
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function AddMentor({
   initialData,
   isEditMode,
@@ -116,7 +118,7 @@ export default function AddMentor({
       // ✅ EDIT
       if (isEditMode && initialData?._id) {
         res = await fetch(
-          `https://skillhat-backend.onrender.com/api/update_mentor/${initialData._id}/`,
+          `${API}/api/update_mentor/${initialData._id}/`,
           {
             method: "PUT",
             body: formDataToSend,
@@ -126,7 +128,7 @@ export default function AddMentor({
 
       // ✅ CREATE
       else {
-        res = await fetch("https://skillhat-backend.onrender.com/api/mentor/", {
+        res = await fetch(`${API}/api/mentor/`, {
           method: "POST",
           body: formDataToSend,
         });
