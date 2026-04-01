@@ -166,17 +166,9 @@ export default function Mentors() {
                       </div>
                     </div>
 
-                    {/* RATING & BUTTONS - Compact height */}
-                    <div className="mt-2 pt-1.5 border-t border-gray-50 flex flex-col gap-1">
-                      
-                      {/* Rating & Students Row */}
-                      <div className="flex items-center justify-between mb-0.5">
-                        <div className="flex items-center gap-0.5 text-yellow-500 font-black text-[10px]">
-                          <MdStar className="text-[11px]" /> {mentor.rating || "0.0"}
-                        </div>
-                        <div className="text-gray-400 font-black text-[7px] uppercase tracking-widest">
-                           {mentor.totalStudents || 0} Studs
-                        </div>
+                    {/* FOOTER */}
+                    <div className="mt-4 pt-2.5 border-t border-gray-50 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
                       </div>
 
                       <div className="flex flex-col gap-1">
