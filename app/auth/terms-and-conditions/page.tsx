@@ -39,8 +39,8 @@ export default function TermsAndConditions() {
 <div className="flex items-center gap-3">
           
             <Image
-              src="/skillhat__2_-removebg-preview.png"        
-              alt="NexusAcademy Logo"
+              src="/logo.png"        
+              alt=" Logo"
               width={120}
               height={120}
               className="drop-shadow-sm"
