@@ -3,7 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { User, LogOut, Menu, X, Search } from "lucide-react";
+import { 
+  FiBriefcase, 
+  FiUsers, 
+  FiUser, 
+  FiSettings, 
+  FiLogOut, 
+  FiMenu, 
+  FiX, 
+  FiSearch,
+  FiLogIn 
+} from "react-icons/fi";
 import { useAuth } from "@/src/context/AuthContext";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -91,28 +101,20 @@ export default function Navbar() {
 
   if (shouldHide) return null;
 
-const handleSearch = (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+    router.push(`/search?query=${encodeURIComponent(search)}`);
+    setIsOpen(false);
+  };
 
-  const query = search.trim();
-  if (!query) return;
-
-  const matchedRoute = findRoute(query);
-
-  if (matchedRoute) {
-    router.push(matchedRoute);
-  } else {
-    router.push(`/internships?search=${encodeURIComponent(query)}`);
-  }
-
-  setIsOpen(false);
-};
+  const closeMenu = () => setIsOpen(false);
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        {/* 🔥 MAIN NAV */}
-        <div className="flex items-center justify-between h-16 gap-2">
+        <div className="flex items-center justify-between h-16 gap-4">
+
           {/* LOGO */}
           <Link href="/" className="flex items-center shrink-0">
             <div className="w-20 sm:w-24 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
@@ -127,18 +129,18 @@ const handleSearch = (e: React.FormEvent) => {
             </div>
           </Link>
 
-          {/* 🔍 SEARCH (NOW ALWAYS VISIBLE) */}
+          {/* SEARCH BAR */}
           <form
             onSubmit={handleSearch}
-            className="flex-1 max-w-[280px] sm:max-w-sm md:max-w-md mx-2 relative"
+            className="flex-1 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-4 relative"
           >
-            <Search
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+            <FiSearch
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
               size={20}
             />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search internships & mentors..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-8 pr-2 py-1.5 sm:py-2 rounded-lg bg-white border border-gray-300 text-xs sm:text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
@@ -185,14 +187,14 @@ const handleSearch = (e: React.FormEvent) => {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* MENU DROPDOWN */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-white border-b px-4 py-4 space-y-4"
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white border-b shadow-lg md:shadow-xl md:absolute md:top-16 md:right-40 md:left-auto md:w-72 md:rounded-3xl md:overflow-hidden z-50"
           >
             <Link
               href="/internships"
