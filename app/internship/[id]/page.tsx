@@ -5,18 +5,20 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { 
-  ArrowLeft, 
-  Loader2, 
-  MapPin, 
-  Clock, 
-  IndianRupee, 
-  Users, 
-  Award, 
-  Target, 
+import {
+  ArrowLeft,
+  Loader2,
+  MapPin,
+  Clock,
+  IndianRupee,
+  Users,
+  Award,
+  Target,
   Calendar,
-  Briefcase 
+  Briefcase,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/context/AuthContext";
 
 const API = process.env.NEXT_PUBLIC_APP_URL;
 
@@ -27,8 +29,45 @@ export default function InternshipDetail() {
   const [internship, setInternship] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleEnroll = async () => {
+    if (!user) {
+      // 🔥 Not logged in → redirect
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API}/upload/enroll/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          internship_id: internship._id, // 🔥 dynamic later
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Enrollment failed");
+      }
+
+      alert("✅ Enrolled successfully!");
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   // Fallback banner agar imageUrl na ho
-  const FALLBACK_BANNER = "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920";
+  const FALLBACK_BANNER =
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920";
 
   function getYouTubeId(url?: string) {
     if (!url) return "";
@@ -47,7 +86,7 @@ export default function InternshipDetail() {
       try {
         const res = await fetch(`${API}/upload/internship/${internshipId}/`);
         if (!res.ok) throw new Error("Failed to fetch");
-        
+
         const data = await res.json();
         setInternship(data);
       } catch (err) {
@@ -78,7 +117,7 @@ export default function InternshipDetail() {
   }
 
   const videoId = getYouTubeId(internship.youtube);
-  
+
   // Use imageUrl from API, fallback to unsplash if not available
   const bannerImage = internship.imageUrl || FALLBACK_BANNER;
 
@@ -105,7 +144,10 @@ export default function InternshipDetail() {
             href="/internships"
             className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-10 transition-colors group"
           >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             <span>Back to Internships</span>
           </Link>
 
@@ -115,38 +157,60 @@ export default function InternshipDetail() {
                 <Briefcase size={18} />
                 <span className="font-medium">Hiring Now</span>
               </div>
-              
+
               <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tighter">
                 {internship.title}
               </h1>
-              <p className="text-2xl text-indigo-100 font-medium">{internship.company}</p>
+              <p className="text-2xl text-indigo-100 font-medium">
+                {internship.company}
+              </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { icon: <MapPin size={24} />, label: "LOCATION", value: internship.location },
-                  { icon: <Clock size={24} />, label: "DURATION", value: internship.duration },
-                  { icon: <IndianRupee size={24} />, label: "STIPEND", value: `₹${internship.stipend}` },
+                  {
+                    icon: <MapPin size={24} />,
+                    label: "LOCATION",
+                    value: internship.location,
+                  },
+                  {
+                    icon: <Clock size={24} />,
+                    label: "DURATION",
+                    value: internship.duration,
+                  },
+                  {
+                    icon: <IndianRupee size={24} />,
+                    label: "STIPEND",
+                    value: `₹${internship.stipend}`,
+                  },
                 ].map((item, i) => (
-                  <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+                  <div
+                    key={i}
+                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
+                  >
                     <div className="text-indigo-300 mb-3">{item.icon}</div>
-                    <p className="text-white/60 text-xs font-bold uppercase tracking-widest">{item.label}</p>
-                    <p className="font-semibold text-xl mt-1 text-white">{item.value}</p>
+                    <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
+                      {item.label}
+                    </p>
+                    <p className="font-semibold text-xl mt-1 text-white">
+                      {item.value}
+                    </p>
                   </div>
                 ))}
               </div>
 
-              <motion.button 
+              <motion.button
+                onClick={handleEnroll}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-12 py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-lg rounded-2xl shadow-lg flex items-center gap-3 transition-all"
               >
                 <Target size={22} />
-                Apply Now
+                Enroll Now
               </motion.button>
             </div>
 
             {/* Video Section */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/20"
@@ -170,7 +234,6 @@ export default function InternshipDetail() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 -mt-10 relative z-20">
         <div className="grid lg:grid-cols-12 gap-8">
-          
           {/* Left Side */}
           <div className="lg:col-span-7 space-y-8">
             {/* About the Internship */}
@@ -179,10 +242,13 @@ export default function InternshipDetail() {
                 <div className="p-4 bg-indigo-100 rounded-2xl">
                   <Award className="text-indigo-600" size={32} />
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900">About the Internship</h2>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  About the Internship
+                </h2>
               </div>
               <div className="text-gray-600 text-[17px] leading-relaxed whitespace-pre-line">
-                {internship.description || "5-month Full Stack Developer Internship program."}
+                {internship.description ||
+                  "5-month Full Stack Developer Internship program."}
               </div>
             </div>
 
@@ -192,10 +258,12 @@ export default function InternshipDetail() {
                 <div className="p-4 bg-indigo-100 rounded-2xl">
                   <Target className="text-indigo-600" size={32} />
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900">Requirements</h2>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  Requirements
+                </h2>
               </div>
               <div className="text-gray-600 text-[17px] leading-relaxed whitespace-pre-line">
-                {internship.requirements || 
+                {internship.requirements ||
                   `• HTML, CSS & JavaScript (ES6+)\n• Basic knowledge of React.js\n• Understanding of Git & GitHub\n• Problem-solving skills\n• Team work & communication\n• Minimum 15 hours/week commitment\n• Laptop with stable internet`}
               </div>
             </div>
@@ -220,8 +288,12 @@ export default function InternshipDetail() {
                         {mentor.name?.[0] || "S"}
                       </div>
                       <div>
-                        <p className="font-semibold text-xl text-gray-900">{mentor.name}</p>
-                        <p className="text-indigo-600 font-medium">{mentor.expertise}</p>
+                        <p className="font-semibold text-xl text-gray-900">
+                          {mentor.name}
+                        </p>
+                        <p className="text-indigo-600 font-medium">
+                          {mentor.expertise}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -247,7 +319,6 @@ export default function InternshipDetail() {
       </div>
 
       {/* Footer */}
-      
     </div>
   );
 }

@@ -124,12 +124,14 @@ export default function Navbar() {
     "/auth/reset-password",
     "/internships",
     "/internships/[id]",
+    "/profile",
   ];
 
   const shouldHide =
     hideNavbarRouters.includes(pathname) ||
     pathname.startsWith("/course/") ||
     pathname.startsWith("/mentors/") ||
+    pathname.startsWith("/profile/") ||
     pathname.startsWith("/admin/");
 
   if (!isMounted || shouldHide) return null;
